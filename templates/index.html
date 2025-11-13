@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>UniBudget — Облік витрат для студентів</title>
+
+    <!-- Підключення CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="page">
+<div class="theme-toggle">
+  <button id="theme-btn">🌓Темний режим</button>
+</div>
+    <!-- Верхній банер з картинкою -->
+    <header class="hero">
+        <div class="hero__overlay"></div>
+        <img class="hero__image"
+             src="{{ url_for('static', filename='img/hero_budget.jpg') }}"
+             alt="Студентський бюджет">
+        <div class="hero__content">
+            <h1>UniBudget</h1>
+            <p>Облік витрат для студентів</p>
+        </div>
+    </header>
+
+    <!-- Форма додавання витрати -->
+    <section class="form-section">
+        <h3>Додати витрату</h3>
+
+        <form id="add-expense-form"
+              action="{{ url_for('add_expense') }}"
+              method="post"
+              class="expense-form">
+
+            <div class="form-row">
+                <label for="category-input">Категорія</label>
+                <input
+                    id="category-input"
+                    type="text"
+                    name="category"
+                    placeholder="Їжа, транспорт, навчання..."
+                    required>
+            </div>
+
+            <div class="form-row">
+                <label for="amount-input">Сума, грн</label>
+                <input
+                    id="amount-input"
+                    type="number"
+                    step="0.01"
+                    name="amount"
+                    placeholder="Наприклад, 150.00"
+                    required>
+            </div>
+
+            <div class="form-row">
+                <label for="description-input">Опис (необов’язково)</label>
+                <input
+                    id="description-input"
+                    type="text"
+                    name="description"
+                    placeholder="Кава, проїзд, зошит тощо">
+            </div>
+
+            <button type="submit" class="primary-btn">Додати</button>
+        </form>
+    </section>
+
+    <!-- Підсумок -->
+    <section class="summary">
+  <p>
+    <strong>Загальна сума витрат:</strong>
+    <span id="total-amount" data-total="{{ total | default(0) }}">
+      {{ "%.2f"|format(total or 0) }}
+    </span> грн
+  </p>
+
+  <!-- Додаємо просто в цю ж секцію -->
+  <div id="preview-box" class="preview-box" style="display: none;">
+    Після додавання буде: <strong id="preview-amount"></strong> грн
+  </div>
+</section>
+    
+
+    <!-- Список витрат + стан -->
+    <section class="list-section">
+        <h3>Список витрат</h3>
+
+        {% if expenses %}
+            <!-- Таблиця витрат -->
+            <table>
+                <thead>
+                <tr>
+                    <th>Дата</th>
+                    <th>Категорія</th>
+                    <th>Сума, грн</th>
+                    <th>Опис</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for exp in expenses %}
+                    <tr>
+                        <td>{{ exp["date"] }}</td>
+                        <td>{{ exp["category"] }}</td>
+                        <td>{{ "%.2f"|format(exp["amount"]) }}</td>
+                        <td>{{ exp["description"] or "" }}</td>
+                        <td>
+                            <form method="post"
+                                  action="{{ url_for('delete_expense', expense_id=exp['id']) }}">
+                                <button type="submit">✖</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+            <!-- Картинка, коли витрати вже є -->
+            <div class="empty-state">
+                <img src="{{ url_for('static', filename='img/all_set.png') }}"
+                     alt="Витрати додано">
+                <p>Всі витрати додано! 👏 Можеш продовжувати вести облік.</p>
+            </div>
+
+        {% else %}
+            <!-- Картинка, коли немає витрат -->
+            <div class="empty-state">
+                <img src="{{ url_for('static', filename='img/empty_state.png') }}"
+                     alt="Немає витрат">
+                <p>Поки що немає витрат. Додай першу вище 👇</p>
+            </div>
+        {% endif %}
+    </section>
+
+</div>
+
+<!-- Підключення JS -->
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
