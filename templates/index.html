@@ -75,6 +75,12 @@
       {{ "%.2f"|format(total or 0) }}
     </span> грн
   </p>
+  <form method="POST" action="{{ url_for('clear_expenses') }}" style="margin-top: 10px; text-align: center;">
+    <button type="submit" class="btn-secondary">
+        Очистити всі витрати
+    </button>
+</form>
+
 
   <!-- Додаємо просто в цю ж секцію -->
   <div id="preview-box" class="preview-box" style="display: none;">

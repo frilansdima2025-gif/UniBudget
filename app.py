@@ -77,6 +77,16 @@ def delete_expense(expense_id):
     conn.close()
     return redirect(url_for("index"))
 
+@app.route("/clear", methods=["POST"])
+def clear_expenses():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM expenses")
+    conn.commit()
+    conn.close()
+    return redirect(url_for("index"))
+
+
 
 if __name__ == "__main__":
     init_db()
